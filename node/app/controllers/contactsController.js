@@ -13,7 +13,7 @@ const {
   validateContactData,
 } = require("@jworkman-fs/asl/src/index");
 const Pager = require("@jworkman-fs/asl/src/Util/Pager");
-
+const validOperators =require("../CONSTANTS/OPERATORS");
 const getContacts = (req, res) => {
   const { page, size, sort, direction, limit } = req.query;
   const filterBy = req.headers["x-filter-by"];
@@ -31,6 +31,7 @@ const getContacts = (req, res) => {
         `${direction} is not a valid direction. Valid directions are asc and desc.`
       );
     }
+
     if (filterOperator && !validOperators.includes(filterOperator)) {
       throw new InvalidOperatorError(
         `${filterOperator} is not a valid operator. Valid operators are eq, gt, gte, lt or lte.`
