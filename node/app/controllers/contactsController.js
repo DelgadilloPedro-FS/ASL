@@ -13,7 +13,8 @@ const {
   validateContactData,
 } = require("@jworkman-fs/asl/src/index");
 const Pager = require("@jworkman-fs/asl/src/Util/Pager");
-const validOperators =require("../CONSTANTS/OPERATORS");
+const validOperators = require("../CONSTANTS/OPERATORS");
+
 const getContacts = (req, res) => {
   const { page, size, sort, direction, limit } = req.query;
   const filterBy = req.headers["x-filter-by"];
@@ -63,13 +64,17 @@ const getContactById = (req, res) => {
   res.status(200).json(contact);
 };
 const createContact = (req, res) => {
-  res.status(200).json(DATA);
+  const { body } = req;
+  validateContactData(body);
+  const newContact = ContactModel.create(body);
+  res.set("Location", `/v1/contacts/${newContact.id}`);
+  res.status(303).json(newContact);
 };
 const updateContact = (req, res) => {
   res.status(200).json(DATA);
 };
 const deleteContact = (req, res) => {
-    res.status(200).json(DATA);
+  res.status(200).json(DATA);
 };
 
 const errorHandling = (err, res) => {
