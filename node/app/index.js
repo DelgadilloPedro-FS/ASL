@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-//const routeHandler = require("./routes");
+const routeHandler = require("./router.js");
 const morgan = require("morgan");
 
 
@@ -13,6 +13,6 @@ app.get("/", (req, res) => {
 });
 
 
-//app.use("/contacts", routeHandler);
+app.use("/v1/contacts", routeHandler)
 
 module.exports = app;
