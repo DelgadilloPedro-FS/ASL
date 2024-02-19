@@ -1,0 +1,12 @@
+services:
+  node:
+    image: node:18.19.0
+    tty: true
+    command: sh -c "npm install && npm install -g jest @jworkman-fs/wdv-cli && npm run dev"
+    ports:
+      - 8080:8080
+    stdin_open: true
+    working_dir: /home/node/app
+
+    volumes:
+      - ./node:/home/node/app
