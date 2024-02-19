@@ -13,6 +13,6 @@ app.get("/", (req, res) => {
 });
 
 
-app.use("/v1/contacts", routeHandler)
+app.use("/v1/", routeHandler)
 
 module.exports = app;
