@@ -17,6 +17,7 @@ const validOperators = require("../CONSTANTS/OPERATORS");
 
 const getContacts = (req, res) => {
   const { page, size, sort, direction, limit } = req.query;
+  
   const filterBy = req.headers["x-filter-by"];
   const filterOperator = req.headers["x-filter-operator"];
   const filterValue = req.headers["x-filter-value"];
@@ -65,16 +66,42 @@ const getContactById = (req, res) => {
 };
 const createContact = (req, res) => {
   const { body } = req;
-  validateContactData(body);
   const newContact = ContactModel.create(body);
   res.set("Location", `/v1/contacts/${newContact.id}`);
   res.status(303).json(newContact);
 };
 const updateContact = (req, res) => {
-  res.status(200).json(DATA);
+  const { body } = req;
+  const { id } = req.params;
+
+  try {
+    if (!Number(id)) {
+      throw new InvalidContactResourceError("The id provided is not a number.");
+    }
+    if (DATA.some((c) => c.email === body.email)) {
+      throw new DuplicateContactResourceError(
+        "A contact with the same email already exists."
+      );
+    }
+    if (!Object.values(body).every((value) => !!value)) {
+      throw new InvalidContactResourceError(
+        "There is a field with an empty value."
+      );
+    }
+    const newContact = ContactModel.update(id, body);
+    res.set("Location", `${newContact.id}`);
+    res.status(303).json(newContact);
+  } catch (err) {
+    errorHandling(err, res);
+  }
 };
 const deleteContact = (req, res) => {
-  res.status(200).json(DATA);
+  const { id } = req.params;
+  if (!Number(id)) {
+    throw new InvalidContactResourceError("The id provided is not a number.");
+  }
+  ContactModel.remove(id);
+  res.redirect(303, "http://localhost:8080/v1/contacts");
 };
 
 const errorHandling = (err, res) => {
